@@ -58,7 +58,7 @@ class Hash extends Model
     /**
      * @var array
      */
-    protected $dates = ['expires_at'];
+    protected $dates = [];
 
     /**
      * Model boot

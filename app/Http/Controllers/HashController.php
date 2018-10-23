@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Nord\Lumen\Fractal\FractalService;
 
@@ -56,16 +57,24 @@ class HashController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(FractalService $fractal, string $hash) {
-        $result = Hash::where('hash', '=', $hash)
+        /**
+         * @var Hash $result
+         */
+        $result = Hash::where([
+            ['hash', '=', $hash],
+            ['remaining_views', '>', 0]
+        ])
             ->where(function (Builder $q) {
                 $q
-                    ->where('expires_at', '<', Carbon::now())
-                    ->orWhere('will_expire', '=', 0)
-                    ->orWhere('remaining_views', '>', 0);
+                    ->where('expires_at', '>', DB::raw('NOW()'))
+                    ->orWhere('will_expire', '=', 0);
             })
             ->first();
         if (!$result) {
             throw new HashNotFoundOrInvalidException('Secret not found', 404);
+        }
+        if ($result->remaining_views > 0) {
+            $result->decrement('remaining_views');
         }
         return ResponseFactory::make($fractal->item($result, new HashTransformer())->toArray());
     }

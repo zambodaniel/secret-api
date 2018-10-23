@@ -15,13 +15,15 @@ class CreateSecretsTable extends Migration
     {
         Schema::create('secrets', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')
                 ->onDelete('cascade');
             $table->string('hash', 255)->unique();
             $table->longText('secret_text');
-            $table->timestamp('expires_at');
+            $table->timestamp('expires_at')->nullable();
             $table->integer('remaining_views')->unsigned();
+            $table->boolean('will_expire')->default(true);
+            $table->index(['hash', 'remaining_views', 'expires_at', 'will_expire']);
             $table->timestamps();
         });
     }
