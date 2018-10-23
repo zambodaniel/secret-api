@@ -18,7 +18,7 @@ class CreateSecretsTable extends Migration
             $table->unsignedInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')
                 ->onDelete('cascade');
-            $table->string('hash', 255)->unique();
+            $table->string('hash', 128)->unique();
             $table->longText('secret_text');
             $table->timestamp('expires_at')->nullable();
             $table->integer('remaining_views')->unsigned();
