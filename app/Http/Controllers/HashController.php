@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\HashInputInvalidException;
 use App\Exceptions\HashNotFoundOrInvalidException;
+use App\Http\ResponseFactory;
 use App\Models\Hash;
 use App\Transformers\HashTransformer;
 use Carbon\Carbon;
@@ -44,7 +45,7 @@ class HashController extends Controller
             'remaining_views' => $validatedData['expireAfterViews'],
             'will_expire' => ($request->input('expireAfter') > 0 ? true : false)
         ]);
-        return response()->json($fractal->item($result, new HashTransformer())->toArray());
+        return ResponseFactory::make($fractal->item($result, new HashTransformer())->toArray());
     }
 
     /**
@@ -66,7 +67,7 @@ class HashController extends Controller
         if (!$result) {
             throw new HashNotFoundOrInvalidException('Secret not found', 404);
         }
-        return response()->json($fractal->item($result, new HashTransformer())->toArray());
+        return ResponseFactory::make($fractal->item($result, new HashTransformer())->toArray());
     }
 
 

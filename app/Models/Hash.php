@@ -10,6 +10,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -31,6 +32,9 @@ use Ramsey\Uuid\Uuid;
 class Hash extends Model
 {
 
+    /**
+     * @var string
+     */
     protected $table = 'secrets';
 
     /**
@@ -51,6 +55,9 @@ class Hash extends Model
 
     ];
 
+    /**
+     * @var array
+     */
     protected $dates = ['expires_at'];
 
     /**
@@ -73,5 +80,13 @@ class Hash extends Model
      */
     public function user() {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @param $value
+     * @return mixed
+     */
+    public function getSecretTextAttribute($value) {
+        return Crypt::decryptString($value);
     }
 }

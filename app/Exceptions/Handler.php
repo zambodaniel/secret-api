@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Http\ResponseFactory;
 use Exception;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
@@ -74,7 +75,7 @@ class Handler extends ExceptionHandler
             $exception = new HttpException($status, 'HTTP_INTERNAL_SERVER_ERROR');
         }
 
-        return response()->json([
+        return ResponseFactory::make([
             'success' => false,
             'status' => $status,
             'message' => $exception->getMessage()
