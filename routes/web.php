@@ -14,3 +14,9 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group(['prefix' => 'v1'], function () use ($router) {
+    $router->get('hash/{hash}', ['as' => 'hash.show', 'uses' => 'HashController@show']);
+    $router->post('hash', ['as' => 'hash.store', 'uses' => 'HashController@store']);
+    $router->put('hash', ['as' => 'hash.store', 'uses' => 'HashController@store']);
+});
